@@ -27,7 +27,7 @@ vfox use --global groovy@2.4.21
 - Folders in `/opt` and `/usr/local` whose names start with `groovy`
 - On Windows: Scoop's `scoop\apps\groovy\current`, Chocolatey's `groovy\tools` folder, folders in `Program Files` and in the root of the system drive whose names start with `groovy`
 
-An SDK counts when its launcher (`bin/groovy`, or `bin\groovy.bat` on Windows) is there, and its core jar is there too: `lib/groovy-<version>.jar`, or `indy/groovy-<version>-indy.jar` in the Debian package. The module jars beside it, such as `groovy-json-<version>.jar`, do not count.
+An SDK counts when its launcher can run (`bin/groovy` with the execute bit set, or `bin\groovy.bat` on Windows), and its core jar is there too: `lib/groovy-<version>.jar`, or `indy/groovy-<version>-indy.jar` in the Debian package. The module jars beside it, such as `groovy-json-<version>.jar`, do not count.
 
 Folders under a `.vfox` directory are vfox's own installs, so they are never offered for linking.
 

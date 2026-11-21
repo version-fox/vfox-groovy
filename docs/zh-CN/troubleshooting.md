@@ -45,7 +45,7 @@ vfox 低于 1.1.0，而 `Detect` 钩子是 1.1.0 才加入的。请升级 vfox�
 
 ## `vfox link --detect` 什么也没找到
 
-SDK 可能放在插件不会查找的位置。请按[接入系统 SDK](link.md)中的说明手动链接。确认该目录包含 `bin/groovy` 以及核心 jar `lib/groovy-<版本>.jar`。
+SDK 可能放在插件不会查找的位置。请按[接入系统 SDK](link.md)中的说明手动链接。确认该目录包含 `bin/groovy` 以及核心 jar `lib/groovy-<版本>.jar`，并且 `bin/groovy` 有执行权限（Linux 和 macOS 上可用 `chmod +x bin/groovy`）。
 
 ## 下载的文件校验失败
 

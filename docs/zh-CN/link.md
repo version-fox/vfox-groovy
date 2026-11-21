@@ -27,7 +27,7 @@ vfox use --global groovy@2.4.21
 - `/opt` 和 `/usr/local` 下名字以 `groovy` 开头的文件夹
 - Windows 上：Scoop 的 `scoop\apps\groovy\current`、Chocolatey 的 `groovy\tools` 目录、`Program Files` 以及系统盘根目录下名字以 `groovy` 开头的文件夹
 
-一个目录被认作 SDK，需要它有启动脚本（`bin/groovy`，Windows 上是 `bin\groovy.bat`），并且有核心 jar：`lib/groovy-<版本>.jar`，或者 Debian 软件包里的 `indy/groovy-<版本>-indy.jar`。旁边的模块 jar，例如 `groovy-json-<版本>.jar`，不计入。
+一个目录被认作 SDK，需要它的启动脚本能够运行（`bin/groovy` 需要有执行权限，Windows 上是 `bin\groovy.bat`），并且有核心 jar：`lib/groovy-<版本>.jar`，或者 Debian 软件包里的 `indy/groovy-<版本>-indy.jar`。旁边的模块 jar，例如 `groovy-json-<版本>.jar`，不计入。
 
 位于 `.vfox` 目录下的文件夹是 vfox 自己安装的，因此不会被提供用于链接。
 

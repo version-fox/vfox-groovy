@@ -29,6 +29,9 @@ end
 -- to the names of its entries. Paths are compared with forward slashes.
 local files = {}
 local dirs = {}
+-- The launchers that may run. On Unix the plugin asks the shell with test -x,
+-- which answers yes only for a file that exists and has the execute bit.
+local runnable = {}
 
 local function norm(path)
     return (path:gsub("\\", "/"))
@@ -48,12 +51,19 @@ end
 -- The handle has read and close and no lines, as vfox's io.popen on Windows
 -- gives. A listing is read whole, and a read in any other format fails the test.
 io.popen = function(command)
-    local dir = command:match("'([^']+)'") or command:match('"([^"]+)"')
-    local names = dirs[norm(dir or "")] or {}
-    local newline = RUNTIME.osType == "windows" and "\r\n" or "\n"
+    local launcher = command:match("^test %-x '([^']+)'")
     local output = ""
-    for _, name in ipairs(names) do
-        output = output .. name .. newline
+    if launcher then
+        if files[norm(launcher)] and runnable[norm(launcher)] then
+            output = "yes\n"
+        end
+    else
+        local dir = command:match("'([^']+)'") or command:match('"([^"]+)"')
+        local names = dirs[norm(dir or "")] or {}
+        local newline = RUNTIME.osType == "windows" and "\r\n" or "\n"
+        for _, name in ipairs(names) do
+            output = output .. name .. newline
+        end
     end
     return {
         read = function(_, format)
@@ -76,6 +86,9 @@ local function reset()
     for key in pairs(dirs) do
         dirs[key] = nil
     end
+    for key in pairs(runnable) do
+        runnable[key] = nil
+    end
     RUNTIME.osType = "linux"
 end
 
@@ -84,10 +97,12 @@ local function listing(path, names)
     dirs[norm(path)] = names
 end
 
--- Makes a Groovy SDK at home: its launcher, and a core jar in folder (lib by
--- default) with the module jars that ship beside it, which do not count.
+-- Makes a Groovy SDK at home: its launcher, which can run, and a core jar in
+-- folder (lib by default) with the module jars that ship beside it, which do not count.
 local function sdk(home, version, launcher, folder, jar)
-    files[norm(home .. "/bin/" .. (launcher or "groovy"))] = true
+    local launcher_path = norm(home .. "/bin/" .. (launcher or "groovy"))
+    files[launcher_path] = true
+    runnable[launcher_path] = true
     local path = norm(home .. "/" .. (folder or "lib"))
     local names = dirs[path] or {}
     table.insert(names, jar or ("groovy-" .. version .. ".jar"))
@@ -146,6 +161,15 @@ env.HOME = "/home/u"
 sdk("/usr/share/groovy", "2.4.21", "groovy", "indy", "groovy-2.4.21-indy.jar")
 files[norm("/usr/share/groovy/bin/groovy")] = nil
 check("no launcher", "")
+
+-- A launcher without the execute bit cannot run, so the folder is not offered:
+-- vfox would refuse to link it.
+reset()
+env.HOME = "/home/u"
+env.GROOVY_HOME = "/home/u/G"
+sdk("/home/u/G", "4.0.33")
+runnable[norm("/home/u/G/bin/groovy")] = nil
+check("a launcher that is not executable", "")
 
 -- Homebrew keeps the SDK in libexec, behind the opt symlink.
 reset()

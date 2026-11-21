@@ -45,7 +45,7 @@ vfox is older than 1.1.0, which added the `Detect` hook. Update vfox (`vfox --ve
 
 ## `vfox link --detect` finds nothing
 
-The SDK may be in a place the plugin does not look. Link it by hand, as described in [linking system SDKs](link.md). Check that the folder holds `bin/groovy` and a core jar, `lib/groovy-<version>.jar`.
+The SDK may be in a place the plugin does not look. Link it by hand, as described in [linking system SDKs](link.md). Check that the folder holds `bin/groovy` and a core jar, `lib/groovy-<version>.jar`, and that `bin/groovy` is executable (`chmod +x bin/groovy` on Linux and macOS).
 
 ## A download fails its checksum
 
