@@ -57,8 +57,8 @@ assert(result.url == sdk_url("4.0.22"), "url: " .. tostring(result.url))
 assert(result.sha256 == DIGEST, "sha256: " .. tostring(result.sha256))
 assert(requests[#requests] == sdk_url("4.0.22") .. ".sha256", "the digest is fetched from the .sha256 file")
 
--- An incubator release: its file has no suffix, and it publishes no SHA-256,
--- so the install goes on without a digest.
+-- An incubator release: its file has no suffix, and it publishes no SHA-256
+-- (the archive answers 404), so the install goes on without a digest.
 result = plugin:PreInstall({ version = "2.4.5-incubating" })
 assert(result.version == "2.4.5-incubating", "incubator version kept: " .. tostring(result.version))
 assert(result.url == sdk_url("2.4.5-incubating", "2.4.5"), "incubator url: " .. tostring(result.url))
@@ -69,14 +69,6 @@ files[sdk_url("6.0.0-RC-1") .. ".sha256"] = { status_code = 200, body = DIGEST }
 result = plugin:PreInstall({ version = "6.0.0-RC-1" })
 assert(result.url == sdk_url("6.0.0-RC-1"), "release candidate url: " .. tostring(result.url))
 assert(result.sha256 == DIGEST, "release candidate sha256: " .. tostring(result.sha256))
-
--- A checksum that cannot be fetched or read does not fail the install.
-files[sdk_url("5.0.0") .. ".sha256"] = { error = "connection reset" }
-result = plugin:PreInstall({ version = "5.0.0" })
-assert(result.sha256 == nil, "a failed fetch gives no digest")
-files[sdk_url("5.0.1") .. ".sha256"] = { status_code = 200, body = "<html>oops</html>" }
-result = plugin:PreInstall({ version = "5.0.1" })
-assert(result.sha256 == nil, "a page that is not a digest gives no digest")
 
 -- A mirror serves the zip and the digest, and the install uses it.
 env.mirror = "https://mirror.example.com/apache/groovy/"
@@ -89,9 +81,9 @@ assert(result.url == mirrored, "mirrored url: " .. tostring(result.url))
 assert(result.sha256 == DIGEST, "mirrored digest: " .. tostring(result.sha256))
 env.mirror = nil
 
--- Versions that cannot name an archive directory are refused before any request.
--- These cases come last, since pcall would hide the closure's later assignments
--- (see util_test.lua).
+-- The cases below fail on purpose, so they come last: once pcall has caught an
+-- error, gopher-lua's closures no longer see later assignments to the locals
+-- around them (see util_test.lua).
 local count = #requests
 for _, version in ipairs({ "../4.0.22", "latest", "4..0" }) do
     local ok, err = pcall(plugin.PreInstall, plugin, { version = version })
@@ -99,4 +91,19 @@ for _, version in ipairs({ "../4.0.22", "latest", "4..0" }) do
 end
 assert(#requests == count, "an invalid version makes no request")
 
-print("PASS: PreInstall names, verifies and mirrors downloads")
+-- A digest that cannot be fetched or read stops the install: a download is never
+-- installed unchecked because its digest could not be read.
+files[sdk_url("5.0.0") .. ".sha256"] = { error = "connection reset" }
+local ok, err = pcall(plugin.PreInstall, plugin, { version = "5.0.0" })
+assert(
+    not ok and tostring(err):find("failed to fetch", 1, true) and tostring(err):find("connection reset", 1, true),
+    "a failed fetch: " .. tostring(err)
+)
+files[sdk_url("5.0.1") .. ".sha256"] = { status_code = 500, body = "Internal Server Error" }
+ok, err = pcall(plugin.PreInstall, plugin, { version = "5.0.1" })
+assert(not ok and tostring(err):find("status_code => 500", 1, true), "a server error: " .. tostring(err))
+files[sdk_url("5.0.2") .. ".sha256"] = { status_code = 200, body = "<html>oops</html>" }
+ok, err = pcall(plugin.PreInstall, plugin, { version = "5.0.2" })
+assert(not ok and tostring(err):find("no SHA-256 digest", 1, true), "a page that is not a digest: " .. tostring(err))
+
+print("PASS: PreInstall names, verifies, mirrors and refuses unchecked downloads")

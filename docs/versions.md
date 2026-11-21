@@ -42,7 +42,7 @@ vfox verifies a download whenever Apache publishes a SHA-256 digest for it. The 
 WARNING: Checksum is not provided, skip verify...
 ```
 
-If the digest file cannot be read, the plugin prints `Cannot verify the download` and the install goes on, the same way.
+If the digest cannot be fetched or read for a release that publishes one, the install stops with `Cannot verify the download`, so a download is never installed unchecked. Retry the install, or use a mirror that serves the digest.
 
 ## Versions that are not listed
 

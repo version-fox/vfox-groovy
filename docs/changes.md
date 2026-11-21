@@ -9,7 +9,7 @@ Entries go under *Unreleased* until the release workflow publishes a version; th
 ### Added
 
 - `vfox link --detect groovy` adopts Groovy SDKs already on the machine, from SDKMAN, asdf, mise, Homebrew, the Debian and Ubuntu package, Scoop, Chocolatey and the usual folders. It needs vfox 1.1.0 or later. See [linking system SDKs](link.md).
-- Each SDK download is verified against the SHA-256 digest Apache publishes beside the zip. The incubator release 2.4.5-incubating publishes an MD5 only, so it installs with a warning that no checksum is provided.
+- Each SDK download is verified against the SHA-256 digest Apache publishes beside the zip. The incubator release 2.4.5-incubating publishes an MD5 only, so it installs with a warning that no checksum is provided. A download whose digest cannot be read is not installed.
 - `vfox search groovy` marks pre-releases with `pre-release` and incubator releases with `incubating`.
 - `VFOX_GROOVY_MIRROR` downloads from another copy of the Apache archive. See [mirror](mirror.md).
 - Documentation in English and Chinese: versions, platforms, linking, mirror, troubleshooting, development and the end-to-end tests.

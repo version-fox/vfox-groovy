@@ -22,9 +22,12 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 插件无法读取 `https://archive.apache.org/dist/groovy/`（或 `VFOX_GROOVY_MIRROR` 指定的镜像）。错误信息中有 URL 和原因。可以用 `curl -I https://archive.apache.org/dist/groovy/` 检查连接，或者改用镜像（见[镜像](mirror.md)）。
 
-## `Cannot verify the download: status_code => 404`
+## `Cannot verify the download`
 
-只要 Apache 为某个版本提供了 SHA-256 摘要，vfox 就会校验该下载。孵化版 2.4.5-incubating 只提供 MD5，因此它的安装会在没有校验值的情况下继续，vfox 会提示 `Checksum is not provided`，这是预期行为。其他状态码说明是网络问题：重试，或改用镜像。
+插件无法读取已发布版本的 SHA-256 摘要，因此它中止了安装，而不是在未校验的情况下安装下载的文件。错误信息中有 URL 和原因，例如 `status_code => 503` 或连接错误。请重试安装，或使用镜像（见[镜像](mirror.md)）。
+
+没有发布摘要的版本，例如 2.4.5-incubating，会在没有校验值的情况下安装：vfox 会提示 `Checksum is not provided`，这是预期行为。
+
 
 ## `vfox link --detect` 提示插件无法检测 SDK
 

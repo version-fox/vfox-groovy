@@ -42,7 +42,7 @@ Install groovy@4.0.22 success!
 WARNING: Checksum is not provided, skip verify...
 ```
 
-如果摘要文件读取失败，插件会打印 `Cannot verify the download`，安装同样会继续。
+如果某个发布了摘要的版本，其摘要无法获取或读取，安装会以 `Cannot verify the download` 失败，因此下载的文件绝不会在未校验的情况下安装。请重试安装，或使用提供摘要的镜像。
 
 ## 归档中没有的版本
 

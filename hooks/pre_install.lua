@@ -15,22 +15,31 @@
 local http = require("http")
 local util = require("util")
 
---- Fetches the SHA-256 digest Apache publishes beside an SDK zip. Some releases,
---- such as 2.4.5-incubating, publish an MD5 only, and then there is none.
+--- Fetches the SHA-256 digest Apache publishes beside an SDK zip. A release that
+--- publishes none, such as 2.4.5-incubating, answers 404: the result is nil, and
+--- vfox says the download is not verified. Any other failure stops the install,
+--- so that a download is never installed unchecked because its digest could not
+--- be read.
 --- @param url string
---- @return string|nil Digest
---- @return string|nil Why there is none
+--- @return string|nil The digest (nil when the release publishes none)
 local function fetch_sha256(url)
     local resp, err = http.get({
         url = url,
     })
     if err ~= nil then
-        return nil, err
+        error("Cannot verify the download: failed to fetch " .. url .. ": " .. err)
+    end
+    if resp.status_code == 404 then
+        return nil
     end
     if resp.status_code ~= 200 then
-        return nil, "status_code => " .. resp.status_code
+        error("Cannot verify the download: failed to fetch " .. url .. ": status_code => " .. resp.status_code)
     end
-    return util.parse_checksum(resp.body)
+    local digest, reason = util.parse_checksum(resp.body)
+    if not digest then
+        error("Cannot verify the download: " .. url .. " has " .. reason)
+    end
+    return digest
 end
 
 --- @class PreInstallContext
@@ -50,15 +59,9 @@ function PLUGIN:PreInstall(ctx)
         )
     end
 
-    local package = {
+    return {
         version = version,
         url = util.download_url(version),
+        sha256 = fetch_sha256(util.checksum_url(version)),
     }
-    local digest, reason = fetch_sha256(util.checksum_url(version))
-    if digest then
-        package.sha256 = digest
-    else
-        print("Cannot verify the download: " .. reason)
-    end
-    return package
 end
