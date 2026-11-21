@@ -40,7 +40,7 @@ cd tests\e2e
 go test -v -timeout 55m -run TestE2E .\windows
 ```
 
-Each version runs with its own `VFOX_HOME`, in a temporary folder that is removed at the end of the test, so no run sees another run's installs.
+Each version runs with a home directory of its own: the suite sets `USERPROFILE` (and `HOME`) to a temporary folder, removed at the end of the test, so no run sees another run's installs.
 
 ## CI
 

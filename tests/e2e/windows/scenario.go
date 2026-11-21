@@ -23,9 +23,13 @@ import (
 	"github.com/version-fox/vfox-groovy/tests/e2e/common"
 )
 
-// activate sets up vfox's hooks, which `vfox use` needs. Each script runs in a
-// new pwsh, so it comes before every command that uses vfox.
-const activate = "vfox activate pwsh | Out-String | Invoke-Expression"
+// activate loads vfox's PowerShell hook, which marks the session as one vfox
+// can use. Each script runs in a new pwsh, so it comes before every command
+// that uses vfox. The hook sets the console's encodings last, and that can
+// throw in a process with no console, as a CI step is. The try keeps such a
+// throw from ending the command line: the hook has already set its session
+// marker by then, and `vfox use --global` does not need the hook anyway.
+const activate = "try { vfox activate pwsh | Out-String | Invoke-Expression } catch { }"
 
 // load exports the environment of the current version into the session:
 // GROOVY_HOME, and the bin folder on PATH.
@@ -43,7 +47,7 @@ const fakeVersion = "9.9.9"
 func runVersion(t *testing.T, plugin, version string) {
 	t.Helper()
 	dir := tempDir(t)
-	s := &shell{t: t, home: filepath.Join(dir, ".vfox")}
+	s := &shell{t: t, home: dir}
 
 	s.must("add the plugin", "vfox add groovy --source "+quote(plugin)+"; exit $LASTEXITCODE")
 

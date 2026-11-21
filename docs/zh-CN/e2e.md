@@ -40,7 +40,7 @@ cd tests\e2e
 go test -v -timeout 55m -run TestE2E .\windows
 ```
 
-每个版本使用自己的 `VFOX_HOME`，位于测试结束时删除的临时目录中，因此任何一次运行都看不到其他运行的安装。
+每个版本使用自己的主目录：测试把 `USERPROFILE`（和 `HOME`）设为一个临时目录，测试结束时删除，因此任何一次运行都看不到其他运行的安装。
 
 ## CI
 

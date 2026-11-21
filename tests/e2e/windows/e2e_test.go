@@ -15,7 +15,7 @@
 // Package windows is the Windows end-to-end suite. It runs on a Windows host,
 // natively: the vfox release and a JDK are installed beforehand (the E2E
 // workflow does it), and each Groovy version is installed, used and run
-// through pwsh in a VFOX_HOME of its own.
+// through pwsh in a home directory of its own.
 package windows
 
 import (

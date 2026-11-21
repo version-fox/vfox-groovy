@@ -28,8 +28,8 @@ import (
 	"github.com/version-fox/vfox-groovy/tests/e2e/common"
 )
 
-// shell runs PowerShell scripts for one version, with the run's own VFOX_HOME,
-// so that no run sees another run's installs.
+// shell runs PowerShell scripts for one version, with a home directory of its
+// own, so that no run sees another run's installs.
 type shell struct {
 	t    *testing.T
 	home string
@@ -52,11 +52,43 @@ func quote(s string) string {
 	return "'" + strings.ReplaceAll(s, "'", "''") + "'"
 }
 
+// dropped names the variables a run does not inherit: vfox's own home, and the
+// Groovy home of the machine, which would make a run depend on what is
+// installed there. The home directory is set for every run, below.
+var dropped = map[string]bool{
+	"VFOX_HOME":   true,
+	"GROOVY_HOME": true,
+	"USERPROFILE": true,
+	"HOME":        true,
+}
+
+// isolatedEnv returns base as the environment of one run: without the variables
+// dropped names, and without vfox's session flags (__VFOX_*), which a shell
+// inside a vfox session would pass on. home becomes the home directory, as
+// USERPROFILE on Windows and HOME elsewhere, so that vfox keeps its tmp, plugin,
+// cache and sdks under home\.vfox, as it does in a user's home.
+//
+// VFOX_HOME is not set on purpose. vfox creates the plugin and cache folders in
+// it with os.Mkdir, which needs VFOX_HOME itself to exist already, so a new
+// directory makes `vfox add` fail.
+func isolatedEnv(base []string, home string) []string {
+	var env []string
+	for _, kv := range base {
+		name, _, _ := strings.Cut(kv, "=")
+		upper := strings.ToUpper(name)
+		if dropped[upper] || strings.HasPrefix(upper, "__VFOX_") {
+			continue
+		}
+		env = append(env, kv)
+	}
+	return append(env, "USERPROFILE="+home, "HOME="+home)
+}
+
 // run runs script in a new pwsh and returns its result. A script that exits
 // non-zero is a result with its exit code; an error means pwsh could not run.
 func (s *shell) run(script string) (common.Result, error) {
 	cmd := exec.Command("pwsh", "-NoProfile", "-NonInteractive", "-EncodedCommand", encode(script))
-	cmd.Env = append(os.Environ(), "VFOX_HOME="+s.home)
+	cmd.Env = isolatedEnv(os.Environ(), s.home)
 	out, err := cmd.CombinedOutput()
 	var exitErr *exec.ExitError
 	if errors.As(err, &exitErr) {
