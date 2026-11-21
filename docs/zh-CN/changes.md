@@ -2,15 +2,18 @@
 
 [中文](changes.md) | [English](../changes.md)
 
-条目先记在 *Unreleased* 下，直到发布工作流发布一个版本；届时该版本会在自己的标题下保留这些条目。
+新条目记在 *Unreleased* 下。发布一个版本时，把它的条目移到以版本号和日期命名的标题下，并把 *Unreleased* 留空，供之后的改动使用。
 
 ## Unreleased
+
+## v0.1.1 - 2026-11-21
 
 ### 新增
 
 - `vfox link --detect groovy` 可以接入机器上已经安装的 Groovy SDK，来源包括 SDKMAN、asdf、mise、Homebrew、Debian 和 Ubuntu 软件包、Scoop、Chocolatey 以及常见的目录。需要 vfox 1.1.0 或更高版本。见[接入系统 SDK](link.md)。
 - 每个 SDK 的下载都会用 Apache 与 zip 并列发布的 SHA-256 摘要校验。孵化版 2.4.5-incubating 只提供 MD5，因此它会在没有校验值的情况下安装，并给出提示。摘要无法读取的下载不会被安装。
 - `vfox search groovy` 会用 `pre-release` 标记预发布版，用 `incubating` 标记孵化版。
+- `vfox info groovy` 会提示 Groovy 运行在 JDK 上，而插件不会安装 JDK，并附上 README 的链接。
 - `VFOX_GROOVY_MIRROR` 可以从 Apache 归档的另一份副本下载。见[镜像](mirror.md)。
 - 中英文文档：版本、平台、接入、镜像、故障排查、开发和端到端测试。
 - 离线 Hook 测试（`vfox plugin test`）、Lua、Go 和工作流文件的 lint 与格式检查、许可证头检查，以及 Linux 容器和 Windows 的端到端套件，并附带对应的 CI 工作流。

@@ -39,8 +39,8 @@ Groovy 运行在 Java 开发工具包（JDK）上，插件不会安装 JDK。请
 
 ## 发布本插件
 
-维护者可以在默认分支上，通过 **Actions → Plugin → Run workflow** 发布。输入不带 `v` 前缀的稳定插件版本即可。共享工作流会更新 `metadata.lua`、创建版本提交和标签，并在本仓库发布 ZIP 和清单。无需本地打标签，也不需要额外的发布令牌。拉取请求只运行检查，PR 标题不再触发发布。
+维护者可以在默认分支上，通过 **Actions → Plugin → Run workflow** 发布。输入不带 `v` 前缀的稳定插件版本即可。共享工作流会更新 `metadata.lua`、创建版本提交和标签，并在本仓库发布 ZIP 和清单。无需本地打标签，也不需要额外的发布令牌。拉取请求只运行检查，PR 标题不会触发发布。
 
 如果 `PLUGIN.version` 与标签一致，仍然支持推送版本标签的方式。发布失败时，重新运行原来失败的作业即可继续。
 
-工作流跟随共享的 `@v1` 发布工具版本，升级工具不会发布本插件。打包约定和首次发布要求见[共享工作流文档](https://github.com/version-fox/plugin-manifest-action)。
+工作流跟随共享的 `@v1` 发布工具版本，升级工具不会发布本插件。打包约定见[共享工作流文档](https://github.com/version-fox/plugin-manifest-action)。

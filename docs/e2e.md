@@ -29,7 +29,7 @@ cd tests/e2e
 go test -v -timeout 55m -run TestE2E ./linux
 ```
 
-The first run builds the image, which takes a few minutes. Each version downloads an SDK of about 60 MB, so a full run needs the network.
+The first run builds the image, which takes a few minutes. Each version downloads its SDK zip, from about 60 MB (4.0.22) to about 120 MB (6.0.0), so a full run needs the network.
 
 ## Windows: natively, with pwsh
 
