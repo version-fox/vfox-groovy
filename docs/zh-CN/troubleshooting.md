@@ -18,6 +18,10 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 插件只接受 `vfox search groovy` 列出的版本名，例如 `4.0.22` 或 `6.0.0-RC-1`。`latest` 之类的词不是版本名。请用 `vfox search groovy` 查看，并复制其中的名字。
 
+## `is not a listed release`
+
+版本名不在归档列出的版本之中，例如 `4`、`6.0` 或 `9.9.9`，因此没有可以安装的 SDK。请用 `vfox search groovy` 查看，并复制其中完整的名字，例如 `4.0.33` 或 `6.0.0`。安装会用发布索引核对版本名，所以镜像也必须提供该索引（见[镜像](mirror.md)）。
+
 ## `failed to read the Groovy release index`
 
 插件无法读取 `https://archive.apache.org/dist/groovy/`（或 `VFOX_GROOVY_MIRROR` 指定的镜像）。错误信息中有 URL 和原因。可以用 `curl -I https://archive.apache.org/dist/groovy/` 检查连接，或者改用镜像（见[镜像](mirror.md)）。

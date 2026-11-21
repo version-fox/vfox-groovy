@@ -13,6 +13,7 @@
 -- limitations under the License.
 
 local http = require("http")
+local archive_index = require("archive_index")
 local util = require("util")
 
 --- Fetches the SHA-256 digest Apache publishes beside an SDK zip. A release that
@@ -46,7 +47,8 @@ end
 --- @field version string User-input version
 
 --- Returns the SDK zip of one Groovy version, with its SHA-256 digest when
---- Apache publishes one. vfox checks the download against the digest.
+--- Apache publishes one. vfox checks the download against the digest. A version
+--- that the release index does not list is refused before anything is downloaded.
 --- @param ctx PreInstallContext
 --- @return table Version information
 function PLUGIN:PreInstall(ctx)
@@ -57,6 +59,9 @@ function PLUGIN:PreInstall(ctx)
                 tostring(version)
             )
         )
+    end
+    if not archive_index.lists(version) then
+        error(("Groovy version %q is not a listed release: use a name that vfox search groovy lists"):format(version))
     end
 
     return {

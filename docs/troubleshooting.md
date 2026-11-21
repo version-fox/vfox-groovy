@@ -18,6 +18,10 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 The plugin takes the names `vfox search groovy` lists, such as `4.0.22` or `6.0.0-RC-1`. Words such as `latest` are not versions. Use `vfox search groovy` and copy a name from it.
 
+## `is not a listed release`
+
+The version name is not one the archive lists, such as `4`, `6.0` or `9.9.9`, so there is no SDK to install. Use `vfox search groovy` and copy a full name from it, such as `4.0.33` or `6.0.0`. The install checks the name against the release index, so a mirror must serve that index too (see [mirror](mirror.md)).
+
 ## `failed to read the Groovy release index`
 
 The plugin could not read `https://archive.apache.org/dist/groovy/` (or the mirror in `VFOX_GROOVY_MIRROR`). The message names the URL and the reason. Check the connection with `curl -I https://archive.apache.org/dist/groovy/`, or use a mirror (see [mirror](mirror.md)).

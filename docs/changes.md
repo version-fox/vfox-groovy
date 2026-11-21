@@ -9,6 +9,7 @@ New entries go under *Unreleased*. When a version is released, its entries move 
 ### Fixed
 
 - An archive index with no release link was read as an empty list. `vfox search groovy` then printed `no available version`, and vfox kept that empty list in its cache, so the message stayed after the mirror was fixed. Such an index is now an error, and nothing is cached.
+- `vfox install groovy@4`, and names such as `groovy@6.0` or `groovy@9.9.9` that the archive does not list, failed with a generic download error. A version that the release index does not list is now refused before anything is downloaded, with a message that points to `vfox search groovy`.
 
 ## v0.1.1 - 2026-11-21
 

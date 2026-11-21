@@ -9,6 +9,7 @@
 ### 修复
 
 - 归档索引中没有任何版本链接时，插件把它当作空列表返回。`vfox search groovy` 因此显示 `no available version`，vfox 还把这个空列表留在缓存里，镜像修好之后提示仍然存在。现在这种索引会报错，且不会写入缓存。
+- `vfox install groovy@4`，以及归档索引中没有列出的 `groovy@6.0`、`groovy@9.9.9` 等名字，之前都以通用的下载错误失败。现在这类版本会在下载前被拒绝，错误信息指向 `vfox search groovy`。
 
 ## v0.1.1 - 2026-11-21
 

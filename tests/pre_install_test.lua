@@ -35,6 +35,22 @@ end
 
 local plugin = test.load({ os = "linux", arch = "amd64", http = answer })
 
+-- The release index a version is checked against: the page vfox search groovy
+-- reads, listing the versions the cases below use.
+local INDEX = [[
+<html><body><pre><a href="/dist/">Parent Directory</a>
+<a href="?C=N;O=D">Name</a> <a href="?C=M;O=A">Last modified</a>
+<a href="2.4.5-incubating/">2.4.5-incubating/</a>
+<a href="4.0.22/">4.0.22/</a>
+<a href="5.0.0/">5.0.0/</a>
+<a href="5.0.1/">5.0.1/</a>
+<a href="5.0.2/">5.0.2/</a>
+<a href="6.0.0-RC-1/">6.0.0-RC-1/</a>
+<a href="KEYS">KEYS</a>
+</pre></body></html>
+]]
+files[ARCHIVE .. "/"] = { status_code = 200, body = INDEX }
+
 -- The mirror comes from the environment, which the cases set for each call.
 local env = {}
 local getenv = os.getenv
@@ -49,7 +65,7 @@ local function sdk_url(version, artifact)
     return ("%s/%s/distribution/apache-groovy-sdk-%s.zip"):format(ARCHIVE, version, artifact or version)
 end
 
--- A release with a SHA-256 digest: the zip and the digest are both fetched.
+-- A release with a SHA-256 digest: the index, the zip and the digest are read.
 files[sdk_url("4.0.22") .. ".sha256"] = { status_code = 200, body = DIGEST .. "\r\n" }
 local result = plugin:PreInstall({ version = "4.0.22" })
 assert(result.version == "4.0.22", "version: " .. tostring(result.version))
@@ -73,8 +89,9 @@ result = plugin:PreInstall({ version = "6.0.0-RC-1" })
 assert(result.url == sdk_url("6.0.0-RC-1"), "release candidate url: " .. tostring(result.url))
 assert(result.sha256 == DIGEST, "release candidate sha256: " .. tostring(result.sha256))
 
--- A mirror serves the zip and the digest, and the install uses it.
+-- A mirror serves the index, the zip and the digest, and the install uses it.
 env.mirror = "https://mirror.example.com/apache/groovy/"
+files["https://mirror.example.com/apache/groovy/"] = { status_code = 200, body = INDEX }
 local mirrored = ("%s/4.0.22/distribution/apache-groovy-sdk-4.0.22.zip"):format(
     "https://mirror.example.com/apache/groovy"
 )
@@ -93,6 +110,17 @@ for _, version in ipairs({ "../4.0.22", "latest", "4..0" }) do
     assert(not ok and tostring(err):find("Invalid Groovy version", 1, true), version .. ": " .. tostring(err))
 end
 assert(#requests == count, "an invalid version makes no request")
+
+-- A version the archive does not list is refused before its digest is asked for.
+for _, version in ipairs({ "4", "6.0", "9.9.9" }) do
+    local ok, err = pcall(plugin.PreInstall, plugin, { version = version })
+    local message = tostring(err)
+    assert(
+        not ok and message:find("is not a listed release", 1, true) and message:find("vfox search groovy", 1, true),
+        version .. " is not listed: " .. message
+    )
+    assert(requests[#requests] == ARCHIVE .. "/", version .. ": only the release index is requested")
+end
 
 -- A digest that cannot be fetched or read stops the install: a download is never
 -- installed unchecked because its digest could not be read.

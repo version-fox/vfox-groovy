@@ -19,7 +19,7 @@ $env:VFOX_GROOVY_MIRROR = 'https://mirror.example.com/apache/groovy'
 
 The mirror has to keep the layout of the archive, because the plugin builds its URLs from it:
 
-- `<mirror>/` lists the version directories, which `vfox search groovy` reads;
+- `<mirror>/` lists the version directories, which `vfox search groovy` reads and `vfox install` checks a version against;
 - `<mirror>/<version>/distribution/apache-groovy-sdk-<file version>.zip` is the SDK;
 - `<mirror>/<version>/distribution/apache-groovy-sdk-<file version>.zip.sha256` is its SHA-256 digest, when Apache publishes one.
 
