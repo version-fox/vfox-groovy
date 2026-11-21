@@ -1,0 +1,43 @@
+# Troubleshooting
+
+[中文](zh-CN/troubleshooting.md) | [English](troubleshooting.md)
+
+## `JAVA_HOME is not defined correctly`, or `cannot find javac`
+
+Groovy's launcher needs a JDK. Set `JAVA_HOME` to a JDK home, the folder that holds `bin/java`, or put a JDK's `bin` folder with `javac` on `PATH`. On Debian and Ubuntu, a JRE alone is not enough, and the package `openjdk-21-jdk-headless` provides `javac`. The Debian `groovy` package also reads `/usr/lib/jvm/default-java`; if that link is missing, create it:
+
+```bash
+sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
+```
+
+## `groovy: command not found` after `vfox use`
+
+`vfox use` changes the version, but the shell has to load it. Add the activation to your shell profile, for example `eval "$(vfox activate bash)"` for bash and zsh, or `vfox activate pwsh | Out-String | Invoke-Expression` for PowerShell, and open a new shell. For the current shell only, run `eval "$(vfox env -s bash)"`, or in PowerShell `vfox env -s pwsh | Out-String | Invoke-Expression`.
+
+## `Invalid Groovy version`
+
+The plugin takes the names `vfox search groovy` lists, such as `4.0.22` or `6.0.0-RC-1`. Words such as `latest` are not versions. Use `vfox search groovy` and copy a name from it.
+
+## `failed to read the Groovy release index`
+
+The plugin could not read `https://archive.apache.org/dist/groovy/` (or the mirror in `VFOX_GROOVY_MIRROR`). The message names the URL and the reason. Check the connection with `curl -I https://archive.apache.org/dist/groovy/`, or use a mirror (see [mirror](mirror.md)).
+
+## `Cannot verify the download: status_code => 404`
+
+vfox verifies a download whenever Apache publishes a SHA-256 digest for it. The incubator release 2.4.5-incubating publishes an MD5 only, so its install goes on without a checksum, and vfox says `Checksum is not provided`. That is expected. Any other status code is a network problem: retry, or use a mirror.
+
+## `vfox link --detect` says the plugin cannot detect SDKs
+
+vfox is older than 1.1.0, which added the `Detect` hook. Update vfox (`vfox --version`). Until then, link a Groovy folder by hand with `vfox link groovy@<version> <path>`.
+
+## `vfox link --detect` finds nothing
+
+The SDK may be in a place the plugin does not look. Link it by hand, as described in [linking system SDKs](link.md). Check that the folder holds `bin/groovy` and a core jar, `lib/groovy-<version>.jar`.
+
+## A download fails its checksum
+
+vfox refuses to install a zip whose SHA-256 does not match. Delete the cached zip under `$VFOX_HOME/cache/groovy` (by default `~/.vfox/cache/groovy`), and install again. If the same version fails again, report it: the archive may have changed, or the mirror may serve a different file.
+
+## PowerShell: `vfox use` works, but `groovy` still runs the old version
+
+Load the environment again in the same session with `vfox env -s pwsh | Out-String | Invoke-Expression`, or add the activation line to your profile (see above). Each new PowerShell session starts from its profile.
