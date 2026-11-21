@@ -155,6 +155,32 @@ env.GROOVY_HOME = "/home/u/.vfox/sdks/groovy"
 sdk("/home/u/.vfox/sdks/groovy", "4.0.22")
 check("a vfox-managed home", "")
 
+-- VFOX_HOME may be any folder: an install under it is vfox's own, even when the
+-- folder is not called .vfox, and a trailing slash in the variable changes nothing.
+reset()
+env.HOME = "/home/u"
+env.VFOX_HOME = "/data/vfox/"
+env.GROOVY_HOME = "/data/vfox/cache/groovy/v-4.0.33/groovy-4.0.33"
+sdk("/data/vfox/cache/groovy/v-4.0.33/groovy-4.0.33", "4.0.33")
+check("a VFOX_HOME that is not .vfox", "")
+
+-- A folder outside VFOX_HOME is still an SDK.
+reset()
+env.HOME = "/home/u"
+env.VFOX_HOME = "/data/vfox"
+env.GROOVY_HOME = "/opt/groovy-4.0.33"
+sdk("/opt/groovy-4.0.33", "4.0.33")
+check("an SDK outside VFOX_HOME", "4.0.33|/opt/groovy-4.0.33|pointed to by GROOVY_HOME")
+
+-- On Windows the comparison ignores case, and takes backslashes in both paths.
+reset()
+RUNTIME.osType = "windows"
+env.USERPROFILE = "C:\\Users\\u"
+env.VFOX_HOME = "D:\\VFox\\"
+env.GROOVY_HOME = "D:\\vfox\\cache\\groovy\\v-4.0.33\\groovy-4.0.33"
+sdk("D:\\vfox\\cache\\groovy\\v-4.0.33\\groovy-4.0.33", "4.0.33", "groovy.bat")
+check("a VFOX_HOME on Windows", "")
+
 -- A core jar without the launcher is not an SDK.
 reset()
 env.HOME = "/home/u"

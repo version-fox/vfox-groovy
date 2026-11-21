@@ -79,11 +79,34 @@ local function exists(path)
     return false
 end
 
---- Reports whether a path lies under a .vfox directory. vfox manages those
---- installs itself, so they are never offered for linking.
+--- Returns a path in the form the comparisons use: forward slashes, lower case,
+--- and no trailing slash.
+--- @param path string
+--- @return string
+local function comparable(path)
+    local forward = path:gsub("\\", "/")
+    local trimmed = forward:gsub("/+$", "")
+    return trimmed:lower()
+end
+
+--- Reports whether a path lies under vfox's own home: the VFOX_HOME folder when
+--- it is set, or a .vfox directory. vfox manages those installs itself, so they
+--- are never offered for linking.
+--- @param path string
+--- @return boolean
 local function is_vfox_managed(path)
-    local lower = path:lower()
-    return lower:find("/.vfox/", 1, true) ~= nil or lower:find("\\.vfox\\", 1, true) ~= nil
+    local normalized = comparable(path) .. "/"
+    if normalized:find("/.vfox/", 1, true) ~= nil then
+        return true
+    end
+    local vfox_home = os.getenv("VFOX_HOME")
+    if vfox_home ~= nil and trim(vfox_home) ~= "" then
+        local root = comparable(trim(vfox_home)) .. "/"
+        if root ~= "/" and normalized:sub(1, #root) == root then
+            return true
+        end
+    end
+    return false
 end
 
 --- Lists the entries of dir as full paths, or {} when dir is missing or cannot

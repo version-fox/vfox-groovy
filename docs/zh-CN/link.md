@@ -29,7 +29,7 @@ vfox use --global groovy@2.4.21
 
 一个目录被认作 SDK，需要它的启动脚本能够运行（`bin/groovy` 需要有执行权限，Windows 上是 `bin\groovy.bat`），并且有核心 jar：`lib/groovy-<版本>.jar`，或者 Debian 软件包里的 `indy/groovy-<版本>-indy.jar`。旁边的模块 jar，例如 `groovy-json-<版本>.jar`，不计入。
 
-位于 `.vfox` 目录下的文件夹是 vfox 自己安装的，因此不会被提供用于链接。
+位于 `.vfox` 目录下、或位于 `VFOX_HOME`（已设置时）下的文件夹是 vfox 自己安装的，因此不会被提供用于链接。
 
 ## 版本名
 

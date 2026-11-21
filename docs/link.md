@@ -29,7 +29,7 @@ vfox use --global groovy@2.4.21
 
 An SDK counts when its launcher can run (`bin/groovy` with the execute bit set, or `bin\groovy.bat` on Windows), and its core jar is there too: `lib/groovy-<version>.jar`, or `indy/groovy-<version>-indy.jar` in the Debian package. The module jars beside it, such as `groovy-json-<version>.jar`, do not count.
 
-Folders under a `.vfox` directory are vfox's own installs, so they are never offered for linking.
+Folders under a `.vfox` directory, and under `VFOX_HOME` when that variable is set, are vfox's own installs, so they are never offered for linking.
 
 ## Version names
 
