@@ -48,4 +48,4 @@ Lua 代码运行在 vfox 的 Lua 上，即 Lua 5.1：不能使用 `goto`，没�
 
 ## 发布
 
-发布通过 [README](../../README_CN.md#发布本插件) 中的工作流完成。不要在拉取请求中手动修改 `PLUGIN.version`。
+发布通过 [README](../../README_CN.md#发布本插件) 中的工作流完成。不要在拉取请求中手动修改 `PLUGIN.version`。发布之前，请通过拉取请求把[更新日志](changes.md)和[英文更新日志](../changes.md)中 *Unreleased* 下的条目移到新版本的标题下，这样发布时才会包含它们。

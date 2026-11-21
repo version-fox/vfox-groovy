@@ -48,4 +48,4 @@ Lua code runs on vfox's Lua, which is Lua 5.1: no `goto`, no integer division, a
 
 ## Releasing
 
-Releases are published from the workflow in [README](../README.md#releasing-this-plugin). Do not change `PLUGIN.version` by hand in a pull request.
+Releases are published from the workflow in [README](../README.md#releasing-this-plugin). Do not change `PLUGIN.version` by hand in a pull request. Before the release, move the *Unreleased* entries of [the changelog](changes.md) and of [its Chinese counterpart](zh-CN/changes.md) under the heading of the new version, in a pull request, so that the release includes them.
