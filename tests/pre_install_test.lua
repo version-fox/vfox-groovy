@@ -61,7 +61,10 @@ assert(requests[#requests] == sdk_url("4.0.22") .. ".sha256", "the digest is fet
 -- (the archive answers 404), so the install goes on without a digest.
 result = plugin:PreInstall({ version = "2.4.5-incubating" })
 assert(result.version == "2.4.5-incubating", "incubator version kept: " .. tostring(result.version))
-assert(result.url == sdk_url("2.4.5-incubating", "2.4.5"), "incubator url: " .. tostring(result.url))
+assert(
+    result.url == "https://archive.apache.org/dist/groovy/2.4.5-incubating/distribution/apache-groovy-sdk-2.4.5.zip",
+    "incubator url: " .. tostring(result.url)
+)
 assert(result.sha256 == nil, "no digest is expected for 2.4.5-incubating")
 
 -- A release candidate with a digest.

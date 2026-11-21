@@ -35,6 +35,7 @@ end
 
 -- Each version is older than the one after it, as the archive's names order
 -- them: alpha before beta before RC before the release, numbers as numbers.
+-- A release comes after its own pre-releases, so 6.0.0 is newer than 6.0.0-RC-2.
 local ordered = {
     "2.4.5-incubating",
     "2.4.21",
@@ -43,9 +44,14 @@ local ordered = {
     "3.0.0-beta-1",
     "3.0.0-rc-1",
     "3.0.0",
+    "4.0.0-alpha-1",
+    "4.0.0-beta-1",
+    "4.0.0-rc-1",
+    "4.0.0",
     "5.0.0-alpha-2",
     "5.0.0-alpha-10",
     "6.0.0-RC-1",
+    "6.0.0-RC-2",
     "6.0.0-RC-3",
     "6.0.0",
 }

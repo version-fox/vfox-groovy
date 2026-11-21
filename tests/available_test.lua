@@ -16,6 +16,8 @@ local test = require("vfox.test")
 
 -- The top of the Apache archive's index for Groovy, trimmed: the sort links,
 -- the parent link, KEYS, geb/ and an anchor without an href are all there.
+-- The entries come in the order the archive lists them, by name, so a
+-- pre-release is listed before its release, as 6.0.0-RC-1 is before 6.0.0.
 local INDEX = [[
 <html><head><title>Index of /dist/groovy</title></head><body>
 <h1>Index of /dist/groovy</h1>
@@ -24,10 +26,10 @@ local INDEX = [[
 <a name="no-href">an anchor without href</a>
 <a href="2.4.21/">2.4.21/</a>
 <a href="2.4.5-incubating/">2.4.5-incubating/</a>
-<a href="5.0.0-alpha-2/">5.0.0-alpha-2/</a>
 <a href="5.0.0-alpha-10/">5.0.0-alpha-10/</a>
-<a href="6.0.0/">6.0.0/</a>
+<a href="5.0.0-alpha-2/">5.0.0-alpha-2/</a>
 <a href="6.0.0-RC-1/">6.0.0-RC-1/</a>
+<a href="6.0.0/">6.0.0/</a>
 <a href="KEYS">KEYS</a>
 <a href="geb/">geb/</a>
 </pre></body></html>
@@ -77,19 +79,28 @@ for i, item in ipairs(want) do
     )
 end
 
--- A failed index is an error that says why. These cases come last, since
--- pcall would hide the closure's later assignments (see util_test.lua).
+-- A failed index is an error that names the archive URL and the reason, with a
+-- space after the colon. These cases come last, since pcall would hide the
+-- closure's later assignments (see util_test.lua).
+local failed = "failed to read the Groovy release index at https://archive.apache.org/dist/groovy/: "
+
 reply.response = nil
 reply.error = "connection reset"
 local ok, err = pcall(plugin.Available, plugin, {})
+local message = tostring(err)
 assert(
-    not ok and tostring(err):find("connection reset", 1, true),
-    "expected the transport error, got " .. tostring(err)
+    not ok and message:find(failed, 1, true) and message:find("connection reset", 1, true),
+    "expected the transport error, got " .. message
 )
 
 reply.error = nil
-reply.response = { status_code = 503, body = "Service Unavailable" }
-ok, err = pcall(plugin.Available, plugin, {})
-assert(not ok and tostring(err):find("status_code => 503", 1, true), "expected the status, got " .. tostring(err))
+for _, status in ipairs({ 404, 503 }) do
+    reply.response = { status_code = status, body = "Not Found" }
+    ok, err = pcall(plugin.Available, plugin, {})
+    assert(
+        not ok and tostring(err):find(failed .. "status_code => " .. status, 1, true),
+        "expected the status " .. status .. ", got " .. tostring(err)
+    )
+end
 
 print("PASS: available versions and index errors")
