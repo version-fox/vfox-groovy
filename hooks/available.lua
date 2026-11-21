@@ -45,6 +45,11 @@ function PLUGIN:Available(ctx)
             })
         end
     end)
+    -- vfox keeps an empty list in its cache and reports no available version,
+    -- so an index without any release is an error instead.
+    if #versions == 0 then
+        error("failed to read the Groovy release index at " .. url .. ": no release is listed")
+    end
     table.sort(versions, function(a, b)
         return util.compare(a.version, b.version) > 0
     end)

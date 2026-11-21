@@ -35,6 +35,18 @@ local INDEX = [[
 </pre></body></html>
 ]]
 
+-- An index that lists no release, as a mirror answers when the archive is
+-- empty or the URL serves another page: the sort links, the parent link and
+-- KEYS, but no version directory.
+local NO_RELEASES = [[
+<html><head><title>Index of /dist/groovy</title></head><body>
+<h1>Index of /dist/groovy</h1>
+<pre><a href="/dist/">Parent Directory</a>
+<a href="?C=N;O=D">Name</a> <a href="?C=M;O=A">Last modified</a>
+<a href="KEYS">KEYS</a>
+</pre></body></html>
+]]
+
 -- What the next request gets back: a response, or a transport error.
 local reply = {}
 local requests = {}
@@ -102,5 +114,14 @@ for _, status in ipairs({ 404, 503 }) do
         "expected the status " .. status .. ", got " .. tostring(err)
     )
 end
+
+-- An index that lists no release is an error too, not an empty list: vfox
+-- would keep the empty list in its cache and report no available version.
+reply.response = { status_code = 200, body = NO_RELEASES }
+ok, err = pcall(plugin.Available, plugin, {})
+assert(
+    not ok and tostring(err):find(failed .. "no release is listed", 1, true),
+    "expected an index without releases to fail, got " .. tostring(err)
+)
 
 print("PASS: available versions and index errors")

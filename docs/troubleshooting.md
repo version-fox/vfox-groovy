@@ -22,6 +22,8 @@ The plugin takes the names `vfox search groovy` lists, such as `4.0.22` or `6.0.
 
 The plugin could not read `https://archive.apache.org/dist/groovy/` (or the mirror in `VFOX_GROOVY_MIRROR`). The message names the URL and the reason. Check the connection with `curl -I https://archive.apache.org/dist/groovy/`, or use a mirror (see [mirror](mirror.md)).
 
+If the URL answers but lists no release, the message ends with `no release is listed`. The connection works; the URL does not serve the layout of the archive (see [mirror](mirror.md)), so check the mirror rather than the network.
+
 ## `Cannot verify the download`
 
 The plugin could not read the SHA-256 digest of a release that publishes one, so it stopped the install rather than install the download unchecked. The message names the URL and the reason, such as `status_code => 503` or a connection error. Retry the install, or use a mirror (see [mirror](mirror.md)).

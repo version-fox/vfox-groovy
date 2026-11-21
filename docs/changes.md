@@ -6,6 +6,10 @@ New entries go under *Unreleased*. When a version is released, its entries move 
 
 ## Unreleased
 
+### Fixed
+
+- An archive index with no release link was read as an empty list. `vfox search groovy` then printed `no available version`, and vfox kept that empty list in its cache, so the message stayed after the mirror was fixed. Such an index is now an error, and nothing is cached.
+
 ## v0.1.1 - 2026-11-21
 
 ### Added

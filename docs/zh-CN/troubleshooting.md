@@ -22,6 +22,8 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 插件无法读取 `https://archive.apache.org/dist/groovy/`（或 `VFOX_GROOVY_MIRROR` 指定的镜像）。错误信息中有 URL 和原因。可以用 `curl -I https://archive.apache.org/dist/groovy/` 检查连接，或者改用镜像（见[镜像](mirror.md)）。
 
+如果地址能正常响应但没有列出任何版本，错误信息会以 `no release is listed` 结尾。连接没有问题，是该地址没有提供归档的目录结构（见[镜像](mirror.md)），应检查镜像而不是网络。
+
 ## `Cannot verify the download`
 
 插件无法读取已发布版本的 SHA-256 摘要，因此它中止了安装，而不是在未校验的情况下安装下载的文件。错误信息中有 URL 和原因，例如 `status_code => 503` 或连接错误。请重试安装，或使用镜像（见[镜像](mirror.md)）。
