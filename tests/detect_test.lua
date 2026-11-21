@@ -45,16 +45,20 @@ io.open = function(path, mode)
     return nil
 end
 
+-- The handle has read and close and no lines, as vfox's io.popen on Windows
+-- gives. A listing is read whole, and a read in any other format fails the test.
 io.popen = function(command)
     local dir = command:match("'([^']+)'") or command:match('"([^"]+)"')
     local names = dirs[norm(dir or "")] or {}
-    local index = 0
+    local newline = RUNTIME.osType == "windows" and "\r\n" or "\n"
+    local output = ""
+    for _, name in ipairs(names) do
+        output = output .. name .. newline
+    end
     return {
-        lines = function()
-            return function()
-                index = index + 1
-                return names[index]
-            end
+        read = function(_, format)
+            assert(format == "*a", "the listing is read whole, not with " .. tostring(format))
+            return output
         end,
         close = function()
             return true

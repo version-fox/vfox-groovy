@@ -104,14 +104,17 @@ function detect.list_entries(dir)
     if not handle then
         return {}
     end
+    -- The listing is read whole and split here. vfox's io.popen on Windows
+    -- returns a handle with read and close only, and no lines method.
+    local output = handle:read("*a") or ""
+    handle:close()
     local entries = {}
-    for line in handle:lines() do
+    for line in output:gmatch("[^\r\n]+") do
         line = trim(line)
         if line ~= "" and line ~= "." and line ~= ".." then
             table.insert(entries, detect.join(dir, line))
         end
     end
-    handle:close()
     return entries
 end
 
