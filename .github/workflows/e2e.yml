@@ -1,0 +1,103 @@
+# Copyright 2026 Han Li and contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: E2E
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  # A new push to a pull request replaces the run of the push before it. Every
+  # commit on main gets a group of its own instead: in one shared group a newer
+  # commit cancels the run of the older, and re-running the older cancels the
+  # newer in turn, so one of the two never ends with a result.
+  group: e2e-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# The Linux job builds the suite's image with the Docker of the runner and runs
+# every version in a container of its own. The Windows job runs natively with
+# pwsh: vfox is installed from its release, checked by its SHA-256, and a JDK
+# from setup-java, which Groovy needs. See docs/e2e.md.
+
+jobs:
+  e2e-linux:
+    if: github.repository == 'version-fox/vfox-groovy'
+    name: Linux container (${{ matrix.runs-on }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest, ubuntu-26.04-arm]
+    runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.1'
+          cache: false
+      - run: go test -v -timeout 55m -run TestE2E ./linux
+        working-directory: tests/e2e
+
+  e2e-windows:
+    if: github.repository == 'version-fox/vfox-groovy'
+    name: Windows (${{ matrix.runs-on }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs-on: windows-latest
+            vfox-asset: vfox_1.1.0_windows_x86_64.zip
+            vfox-sha256: 1bbec8fffddbb62de0d93030c3f6203c69680662bc65257ca4a5e611cb607d0a
+          - runs-on: windows-11-arm
+            vfox-asset: vfox_1.1.0_windows_aarch64.zip
+            vfox-sha256: 67bf5c8b3bde5c1b3fc06dcaa460db9bb1dc9fc587b467d1dc96205377767465
+    runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.1'
+          cache: false
+      - name: Install vfox
+        shell: pwsh
+        env:
+          VFOX_VERSION: 1.1.0
+          VFOX_ASSET: ${{ matrix.vfox-asset }}
+          VFOX_SHA256: ${{ matrix.vfox-sha256 }}
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP $env:VFOX_ASSET
+          Invoke-WebRequest -Uri "https://github.com/version-fox/vfox/releases/download/v$env:VFOX_VERSION/$env:VFOX_ASSET" -OutFile $archive
+          $actual = (Get-FileHash -Algorithm SHA256 -Path $archive).Hash.ToLower()
+          if ($actual -ne $env:VFOX_SHA256) { throw "vfox archive has SHA-256 $actual, want $env:VFOX_SHA256" }
+          $dir = Join-Path $env:RUNNER_TEMP 'vfox'
+          Expand-Archive -Path $archive -DestinationPath $dir
+          $bin = Join-Path $dir ([IO.Path]::GetFileNameWithoutExtension($env:VFOX_ASSET))
+          Add-Content -Path $env:GITHUB_PATH -Value $bin
+          & (Join-Path $bin 'vfox.exe') --version
+      - run: go test -v -timeout 55m -run TestE2E ./windows
+        working-directory: tests/e2e
