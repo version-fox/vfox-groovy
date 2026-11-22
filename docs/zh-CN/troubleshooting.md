@@ -38,7 +38,6 @@ v0.1.1 的插件在归档索引里没有版本时，可能把空的版本列表�
 
 没有发布摘要的版本，例如 2.4.5-incubating，会在没有校验值的情况下安装：vfox 会提示 `Checksum is not provided`，这是预期行为。
 
-
 ## `vfox link --detect` 提示插件无法检测 SDK
 
 vfox 低于 1.1.0，而 `Detect` 钩子是 1.1.0 才加入的。请升级 vfox（用 `vfox --version` 查看）。升级之前，可以用 `vfox link groovy@<版本> <路径>` 手动链接 Groovy 目录。

@@ -30,4 +30,4 @@ The file version drops the `-incubating` suffix of incubator releases such as 2.
 - The value must start with `http://` or `https://`. Anything else stops `vfox search` and `vfox install` with an error that names the value.
 - A trailing slash is dropped, so `https://mirror.example.com/apache/groovy/` works as well.
 - A blank value counts as unset, and the archive is used.
-- The mirror applies to the index, the SDK zip and its checksum. A digest that the mirror does not have (it answers 404) is handled as an absent one: the install goes on, and vfox says the download was not verified. Any other failure to read a digest stops the install.
+- The mirror applies to the index, the SDK zip and its checksum. A digest that the mirror does not have (it answers 404) is handled as an absent one: the install goes on with vfox's `WARNING: Checksum is not provided, skip verify...`, as for 2.4.5-incubating. Any other failure to read a digest stops the install.

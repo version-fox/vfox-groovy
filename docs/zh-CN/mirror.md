@@ -30,4 +30,4 @@ $env:VFOX_GROOVY_MIRROR = 'https://mirror.example.com/apache/groovy'
 - 值必须以 `http://` 或 `https://` 开头。其他值会让 `vfox search` 和 `vfox install` 报错，错误信息中会包含该值。
 - 末尾的斜杠会被去掉，因此 `https://mirror.example.com/apache/groovy/` 同样可用。
 - 空白值视为未设置，仍使用归档。
-- 镜像用于索引、SDK zip 及其校验文件。镜像上没有的摘要（返回 404）按没有摘要处理：安装继续，vfox 会提示下载未经校验。读取摘要时的其他任何失败都会中止安装。
+- 镜像用于索引、SDK zip 及其校验文件。镜像上没有的摘要（返回 404）按没有摘要处理：安装继续，vfox 会打印 `WARNING: Checksum is not provided, skip verify...`，与 2.4.5-incubating 的情况相同。读取摘要时的其他任何失败都会中止安装。

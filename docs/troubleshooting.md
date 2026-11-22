@@ -38,7 +38,6 @@ The plugin could not read the SHA-256 digest of a release that publishes one, so
 
 A release that publishes no digest, such as 2.4.5-incubating, installs without one: vfox says `Checksum is not provided`, which is expected.
 
-
 ## `vfox link --detect` says the plugin cannot detect SDKs
 
 vfox is older than 1.1.0, which added the `Detect` hook. Update vfox (`vfox --version`). Until then, link a Groovy folder by hand with `vfox link groovy@<version> <path>`.
