@@ -6,6 +6,10 @@ New entries go under *Unreleased*. When a version is released, its entries move 
 
 ## Unreleased
 
+### Fixed
+
+- The troubleshooting and versions notes said that `latest` is not a version. `vfox install groovy@latest` works: vfox replaces `latest` with the first name that `vfox search groovy` lists before the plugin runs. The notes now say so.
+
 ## v0.1.2 - 2026-11-22
 
 ### Fixed

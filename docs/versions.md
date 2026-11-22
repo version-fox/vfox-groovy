@@ -46,4 +46,6 @@ If the digest cannot be fetched or read for a release that publishes one, the in
 
 ## Versions that are not listed
 
-`vfox install` refuses names the archive could not hold, such as `latest`, `../4.0.22` or `4..0`, without sending a request. It also refuses a name that the release index does not list, such as `4`, `6.0` or `9.9.9`: the install reads the index first and stops with `is not a listed release` before anything is downloaded. Copy a full name from `vfox search groovy`. See [troubleshooting](troubleshooting.md).
+`vfox install` refuses names the archive could not hold, such as `../4.0.22` or `4..0`, without sending a request. It also refuses a name that the release index does not list, such as `4`, `6.0` or `9.9.9`: the install reads the index first and stops with `is not a listed release` before anything is downloaded. Copy a full name from `vfox search groovy`. See [troubleshooting](troubleshooting.md).
+
+`latest` is not refused. Before the plugin runs, vfox replaces it with the first name that `vfox search groovy` lists, so `vfox install groovy@latest` installs the highest version the archive lists, and that can be a pre-release.

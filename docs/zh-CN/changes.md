@@ -6,6 +6,10 @@
 
 ## Unreleased
 
+### 修复
+
+- 故障排查和版本说明写着 `latest` 不是版本名，但 `vfox install groovy@latest` 本来就能用：插件运行之前，vfox 会把 `latest` 换成 `vfox search groovy` 列出的第一个名字。说明文档现在与此一致。
+
 ## v0.1.2 - 2026-11-22
 
 ### 修复

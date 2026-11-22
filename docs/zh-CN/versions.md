@@ -46,4 +46,6 @@ WARNING: Checksum is not provided, skip verify...
 
 ## 归档中没有的版本
 
-`vfox install` 会拒绝归档里不可能存在的名字，例如 `latest`、`../4.0.22` 或 `4..0`，并且不发送任何请求。对于格式合法、但发布索引中没有列出的名字，例如 `4`、`6.0` 或 `9.9.9`，安装会先读取发布索引，并在下载之前报 `is not a listed release`。请从 `vfox search groovy` 中复制完整的版本名。见[故障排查](troubleshooting.md)。
+`vfox install` 会拒绝归档里不可能存在的名字，例如 `../4.0.22` 或 `4..0`，并且不发送任何请求。对于格式合法、但发布索引中没有列出的名字，例如 `4`、`6.0` 或 `9.9.9`，安装会先读取发布索引，并在下载之前报 `is not a listed release`。请从 `vfox search groovy` 中复制完整的版本名。见[故障排查](troubleshooting.md)。
+
+`latest` 不会被拒绝。插件运行之前，vfox 会把它换成 `vfox search groovy` 列出的第一个名字，因此 `vfox install groovy@latest` 安装的是归档中最高的版本，它可能是预发布版。
