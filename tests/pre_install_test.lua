@@ -96,7 +96,9 @@ local mirrored = ("%s/4.0.22/distribution/apache-groovy-sdk-4.0.22.zip"):format(
     "https://mirror.example.com/apache/groovy"
 )
 files[mirrored .. ".sha256"] = { status_code = 200, body = DIGEST }
+local before = #requests
 result = plugin:PreInstall({ version = "4.0.22" })
+assert(requests[before + 1] == "https://mirror.example.com/apache/groovy/", "the release index comes from the mirror")
 assert(result.url == mirrored, "mirrored url: " .. tostring(result.url))
 assert(result.sha256 == DIGEST, "mirrored digest: " .. tostring(result.sha256))
 env.mirror = nil
