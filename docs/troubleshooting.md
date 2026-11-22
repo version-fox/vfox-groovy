@@ -16,7 +16,7 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 ## `Invalid Groovy version`
 
-The plugin takes the names `vfox search groovy` lists, such as `4.0.22` or `6.0.0-RC-1`. Words such as `latest` are not versions. Use `vfox search groovy` and copy a name from it.
+The plugin takes the names `vfox search groovy` lists, such as `4.0.22` or `6.0.0-RC-1`. `vfox install groovy@latest` also works: vfox replaces `latest` with the first name that `vfox search groovy` lists, which is the highest version the archive lists, pre-releases included, and prints `Using latest version: <name>` before it installs that name. Other words, such as `../4.0.22` or `4..0`, are not versions: use `vfox search groovy` and copy a name from it.
 
 ## `is not a listed release`
 

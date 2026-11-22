@@ -16,7 +16,7 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 ## `Invalid Groovy version`
 
-插件只接受 `vfox search groovy` 列出的版本名，例如 `4.0.22` 或 `6.0.0-RC-1`。`latest` 之类的词不是版本名。请用 `vfox search groovy` 查看，并复制其中的名字。
+插件只接受 `vfox search groovy` 列出的版本名，例如 `4.0.22` 或 `6.0.0-RC-1`。`vfox install groovy@latest` 也能用：vfox 会把 `latest` 换成 `vfox search groovy` 列出的第一个名字，即归档中最高的版本（包括预发布版），并打印 `Using latest version: <版本名>`，然后安装该版本。其他词，例如 `../4.0.22` 或 `4..0`，都不是版本名：请用 `vfox search groovy` 查看，并复制其中的名字。
 
 ## `is not a listed release`
 
