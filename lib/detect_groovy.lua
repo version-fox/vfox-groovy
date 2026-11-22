@@ -79,11 +79,34 @@ local function exists(path)
     return false
 end
 
---- Reports whether a path lies under a .vfox directory. vfox manages those
---- installs itself, so they are never offered for linking.
+--- Returns a path in the form the comparisons use: forward slashes, lower case,
+--- and no trailing slash.
+--- @param path string
+--- @return string
+local function comparable(path)
+    local forward = path:gsub("\\", "/")
+    local trimmed = forward:gsub("/+$", "")
+    return trimmed:lower()
+end
+
+--- Reports whether a path lies under vfox's own home: the VFOX_HOME folder when
+--- it is set, or a .vfox directory. vfox manages those installs itself, so they
+--- are never offered for linking.
+--- @param path string
+--- @return boolean
 local function is_vfox_managed(path)
-    local lower = path:lower()
-    return lower:find("/.vfox/", 1, true) ~= nil or lower:find("\\.vfox\\", 1, true) ~= nil
+    local normalized = comparable(path) .. "/"
+    if normalized:find("/.vfox/", 1, true) ~= nil then
+        return true
+    end
+    local vfox_home = os.getenv("VFOX_HOME")
+    if vfox_home ~= nil and trim(vfox_home) ~= "" then
+        local root = comparable(trim(vfox_home)) .. "/"
+        if root ~= "/" and normalized:sub(1, #root) == root then
+            return true
+        end
+    end
+    return false
 end
 
 --- Lists the entries of dir as full paths, or {} when dir is missing or cannot
@@ -138,10 +161,29 @@ function detect.version_from_jars(names)
     return best
 end
 
---- Reports whether home has the launcher script of a Groovy SDK.
+--- Reports whether a launcher can run. On Windows a .bat file runs by its name,
+--- so it only has to exist. On Unix the file must have the execute bit for the
+--- user, the same test vfox makes before it links a folder: a launcher without
+--- it is not offered, since vfox would refuse to link it.
+--- @param path string
+--- @return boolean
+local function is_runnable(path)
+    if is_windows() then
+        return exists(path)
+    end
+    local handle = io.popen("test -x " .. shell_quote(path) .. " && echo yes", "r")
+    if not handle then
+        return false
+    end
+    local output = handle:read("*a") or ""
+    handle:close()
+    return output:find("yes", 1, true) ~= nil
+end
+
+--- Reports whether home has the launcher script of a Groovy SDK that can run.
 local function has_launcher(home)
     local name = is_windows() and "groovy.bat" or "groovy"
-    return exists(detect.join(detect.join(home, "bin"), name))
+    return is_runnable(detect.join(detect.join(home, "bin"), name))
 end
 
 --- Returns the version of the Groovy SDK at home, or nil when home is not one.

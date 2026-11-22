@@ -19,7 +19,7 @@ $env:VFOX_GROOVY_MIRROR = 'https://mirror.example.com/apache/groovy'
 
 镜像必须保持归档的目录结构，因为插件据此拼接 URL：
 
-- `<镜像>/` 列出各版本目录，`vfox search groovy` 读取的就是它；
+- `<镜像>/` 列出各版本目录，`vfox search groovy` 读取的就是它，`vfox install` 也用它核对版本名；
 - `<镜像>/<版本>/distribution/apache-groovy-sdk-<文件版本>.zip` 是 SDK；
 - `<镜像>/<版本>/distribution/apache-groovy-sdk-<文件版本>.zip.sha256` 是它的 SHA-256 摘要（Apache 提供时）。
 

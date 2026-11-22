@@ -8,7 +8,7 @@
 | --- | --- |
 | `metadata.lua` | 插件的名称、主页、notes 和最低 vfox 版本。发布工作流会设置 `version`。 |
 | `hooks/` | 每个 vfox 钩子一个文件：`available`、`pre_install`、`post_install`、`env_keys`、`pre_use` 和 `detect`。 |
-| `lib/` | 共享代码：`util.lua`（URL、校验值、版本排序）和 `detect_groovy.lua`（系统 SDK 扫描）。 |
+| `lib/` | 共享代码：`util.lua`（URL、校验值、版本排序）、`archive_index.lua`（`vfox search` 和安装读取的发布索引）和 `detect_groovy.lua`（系统 SDK 扫描）。 |
 | `tests/*_test.lua` | 离线 Hook 测试，由 `vfox plugin test` 运行。 |
 | `tests/e2e/` | 端到端测试套件的 Go 模块：`common`、`linux` 和 `windows`。 |
 | `docs/`、`docs/zh-CN/`、`README*.md` | 文档，中英文成对。 |

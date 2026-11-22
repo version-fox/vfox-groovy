@@ -18,9 +18,19 @@ sudo ln -s /usr/lib/jvm/java-21-openjdk-amd64 /usr/lib/jvm/default-java
 
 插件只接受 `vfox search groovy` 列出的版本名，例如 `4.0.22` 或 `6.0.0-RC-1`。`latest` 之类的词不是版本名。请用 `vfox search groovy` 查看，并复制其中的名字。
 
+## `is not a listed release`
+
+版本名不在归档列出的版本之中，例如 `4`、`6.0` 或 `9.9.9`，因此没有可以安装的 SDK。请用 `vfox search groovy` 查看，并复制其中完整的名字，例如 `4.0.33` 或 `6.0.0`。安装会用发布索引核对版本名，所以镜像也必须提供该索引（见[镜像](mirror.md)）。
+
 ## `failed to read the Groovy release index`
 
 插件无法读取 `https://archive.apache.org/dist/groovy/`（或 `VFOX_GROOVY_MIRROR` 指定的镜像）。错误信息中有 URL 和原因。可以用 `curl -I https://archive.apache.org/dist/groovy/` 检查连接，或者改用镜像（见[镜像](mirror.md)）。
+
+如果地址能正常响应但没有列出任何版本，错误信息会以 `no release is listed` 结尾。连接没有问题，是该地址没有提供归档的目录结构（见[镜像](mirror.md)），应检查镜像而不是网络。
+
+## 升级后仍然显示 `no available version`
+
+v0.1.1 的插件在归档索引里没有版本时，可能把空的版本列表存进 vfox 的缓存，vfox 会保留这份列表一段时间。修复后的插件不会清除它，所以升级之后 `vfox search groovy` 仍可能显示 `no available version`。删除插件目录 `$VFOX_HOME/plugin/groovy/`（默认是 `~/.vfox/plugin/groovy/`）中的 `.available.cache`，然后重新搜索。
 
 ## `Cannot verify the download`
 
@@ -35,7 +45,7 @@ vfox 低于 1.1.0，而 `Detect` 钩子是 1.1.0 才加入的。请升级 vfox�
 
 ## `vfox link --detect` 什么也没找到
 
-SDK 可能放在插件不会查找的位置。请按[接入系统 SDK](link.md)中的说明手动链接。确认该目录包含 `bin/groovy` 以及核心 jar `lib/groovy-<版本>.jar`。
+SDK 可能放在插件不会查找的位置。请按[接入系统 SDK](link.md)中的说明手动链接。确认该目录包含 `bin/groovy` 以及核心 jar `lib/groovy-<版本>.jar`，并且 `bin/groovy` 有执行权限（Linux 和 macOS 上可用 `chmod +x bin/groovy`）。
 
 ## 下载的文件校验失败
 

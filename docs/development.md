@@ -8,7 +8,7 @@
 | --- | --- |
 | `metadata.lua` | The plugin's name, homepage, notes and minimum vfox version. The release workflow sets `version`. |
 | `hooks/` | One file per vfox hook: `available`, `pre_install`, `post_install`, `env_keys`, `pre_use`, `detect`. |
-| `lib/` | Shared code: `util.lua` (URLs, checksums, version order) and `detect_groovy.lua` (system SDK scanning). |
+| `lib/` | Shared code: `util.lua` (URLs, checksums, version order), `archive_index.lua` (the release index that `vfox search` and the install read) and `detect_groovy.lua` (system SDK scanning). |
 | `tests/*_test.lua` | Offline hook tests, run by `vfox plugin test`. |
 | `tests/e2e/` | The Go module of the end-to-end suites: `common`, `linux` and `windows`. |
 | `docs/`, `docs/zh-CN/`, `README*.md` | The documentation, in English and Chinese. |

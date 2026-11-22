@@ -6,6 +6,13 @@
 
 ## Unreleased
 
+### 修复
+
+- 归档索引中没有任何版本链接时，插件把它当作空列表返回。`vfox search groovy` 因此显示 `no available version`，vfox 还把这个空列表留在缓存里，镜像修好之后提示仍然存在。现在这种索引会报错，且不会写入缓存。
+- `vfox install groovy@4`，以及归档索引中没有列出的 `groovy@6.0`、`groovy@9.9.9` 等名字，之前都以通用的下载错误失败。现在这类版本会在下载前被拒绝，错误信息指向 `vfox search groovy`。
+- `vfox link --detect` 会提供接入 `bin/groovy` 没有执行权限的 Groovy 目录，然后接入失败。在 Linux 和 macOS 上，只有启动脚本能够运行的目录才会被当作 SDK。
+- `vfox link --detect` 只把 `.vfox` 目录下的安装视为 vfox 自己的安装，因此自定义 `VFOX_HOME` 下的安装会被报告为已找到。现在 `VFOX_HOME` 下的目录也会被跳过。
+
 ## v0.1.1 - 2026-11-21
 
 ### 新增
