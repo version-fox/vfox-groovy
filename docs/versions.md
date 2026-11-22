@@ -19,7 +19,7 @@ A version is named the way Apache names its release directory:
 | Alpha, beta, release candidate | `5.0.0-alpha-10`, `6.0.0-beta-3`, `6.0.0-RC-1` | `pre-release` |
 | Incubator release | `2.4.5-incubating` | `incubating` |
 
-The versions are sorted by their numbers, then by their stage: `6.0.0` comes before `6.0.0-RC-3`, which comes before `6.0.0-RC-1`, and `5.0.0-alpha-10` comes after `5.0.0-alpha-2`.
+The versions are sorted by their numbers, then by their stage, then by the build number after the stage: `6.0.0` comes before `6.0.0-RC-3`, which comes before `6.0.0-RC-1`, and `5.0.0-alpha-10` comes before `5.0.0-alpha-2`.
 
 Pre-releases can be installed like any other version, so `vfox install groovy@6.0.0-RC-1` works. Use `vfox use groovy@4` only where it matches what you want: vfox's fuzzy matching picks an installed version of the major.
 
@@ -46,4 +46,4 @@ If the digest cannot be fetched or read for a release that publishes one, the in
 
 ## Versions that are not listed
 
-`vfox install` refuses names the archive could not hold, such as `latest`, `../4.0.22` or `4..0`. A version that is not in the archive fails with the download's HTTP status, so check the name against `vfox search groovy`.
+`vfox install` refuses names the archive could not hold, such as `latest`, `../4.0.22` or `4..0`, without sending a request. It also refuses a name that the release index does not list, such as `4`, `6.0` or `9.9.9`: the install reads the index first and stops with `is not a listed release` before anything is downloaded. Copy a full name from `vfox search groovy`. See [troubleshooting](troubleshooting.md).

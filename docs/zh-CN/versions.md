@@ -19,7 +19,7 @@ vfox install groovy@4.0.22
 | alpha、beta、候选发布版（RC） | `5.0.0-alpha-10`、`6.0.0-beta-3`、`6.0.0-RC-1` | `pre-release` |
 | 孵化版（incubator） | `2.4.5-incubating` | `incubating` |
 
-版本先按数字排序，数字相同再按阶段排序：`6.0.0` 排在 `6.0.0-RC-3` 之前，`6.0.0-RC-3` 排在 `6.0.0-RC-1` 之前，`5.0.0-alpha-10` 排在 `5.0.0-alpha-2` 之后。
+版本先按数字排序，数字相同再按阶段排序，阶段也相同时再按阶段后的编号排序：`6.0.0` 排在 `6.0.0-RC-3` 之前，`6.0.0-RC-3` 排在 `6.0.0-RC-1` 之前，`5.0.0-alpha-10` 排在 `5.0.0-alpha-2` 之前。
 
 预发布版和其他版本一样可以安装，例如 `vfox install groovy@6.0.0-RC-1`。`vfox use groovy@4` 这类写法依赖 vfox 的模糊匹配，只在你确实想选该主版本下的已安装版本时使用。
 
@@ -46,4 +46,4 @@ WARNING: Checksum is not provided, skip verify...
 
 ## 归档中没有的版本
 
-`vfox install` 会拒绝归档里不可能存在的名字，例如 `latest`、`../4.0.22` 或 `4..0`。归档中没有的版本会以下载的 HTTP 状态码失败，请先用 `vfox search groovy` 核对版本名。
+`vfox install` 会拒绝归档里不可能存在的名字，例如 `latest`、`../4.0.22` 或 `4..0`，并且不发送任何请求。对于格式合法、但发布索引中没有列出的名字，例如 `4`、`6.0` 或 `9.9.9`，安装会先读取发布索引，并在下载之前报 `is not a listed release`。请从 `vfox search groovy` 中复制完整的版本名。见[故障排查](troubleshooting.md)。
